@@ -1,0 +1,74 @@
+﻿﻿# C 에서 http 호출하는 방법
+
+	소켓으로 80번 포트를 열어 HTTP 를 요청하고 결과를 받음.
+
+	1. TCP 소켓 생성
+
+
+	2. RecvTimeout, SendTimeout 설정 (5초 ~ 10초)
+
+		대게 블럭소켓이므로 서버가 반응이 없을경우를 대비
+
+
+	3. HTTP 프로토콜 데이터 생성 
+
+		POST http://127.0.0.1/auth_reg.php HTTP/1.1\r\n
+		User-Agent: XXXXXXX\r\n
+		Host: 127.0.0.1\r\n
+		Connection: Close\r\n
+		Content-Length: 84\r\n
+		\r\n
+		1\r\n
+		1\r\n
+		0\r\n
+		{ "id":"신규아이디", "pass":"패스워드", "nickname":"닉네임" }	
+
+
+		위 데이터는 127.0.0.1 서버에 auth_reg.php 파일을 호출하는 내용
+		
+		Connection: Close 는 서버의 처리 후 끊어지게끔 하기 위함.
+		없어도 상관은 없으나 확실하게 하기 위해 넣음.
+
+		Content-Length 는 실제 BODY 영역의 길이를 넣음.
+		위 포멧에서 서버IP, 호출 Path, 	Content-Length, 그리고 BODY 부분의
+		데이터만 바뀔 수 있도록 만들면 됨.	
+
+
+	4. 웹서버로 Connect
+
+
+	5. 3번에서 만들어진 데이터를 send.
+
+
+	6. send 후 바로 recv 호출.
+
+		recv 는 접속이 끊어질 때 까지 그리고 일정 길이 까지 받음.
+		받는 일정 길이는 컨텐츠 상황에 맞도록 설정. (ex 1024)
+
+
+	7. 데이터를 받은 후 HTTP 헤더에서 완료코드 얻기.
+
+		받은 데이터에서 첫번째 0x20 코드를 찾아서 그 다음 0x20 까지가 완료 코드.
+
+		HTTP/1.1 200 OK
+
+		위 겨로가에서 200 이 완료코드.
+		이 완료코드를 확인 하는게 좋으므로 얻어내도록 함.
+
+
+	8. 데이터를 받은 후 HTTP 헤더에서 Content-Length: 얻기.
+
+		받은 데이터에서 첫번째 Content_Length: 문자열을 찾아서, 그 다음 0x0d 
+		까지가 컨텐츠(BODY) 의 길이.
+
+		Content-Length:159
+
+		위 숫자를 변환하여 BODY 의 길이로 확인.
+		
+
+	9. 헤더의 끝 찾기.
+
+		\r\n\r\n 을 찾아서 그 아래 부분만을 BODY 로 얻어냄.
+
+
+	10. 완료코드와 BODY 영역을 돌려줌.
