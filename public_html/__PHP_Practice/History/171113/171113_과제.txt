@@ -1,0 +1,34 @@
+* 모든 부분에 예외처리가 안전하게 되어 있어야함
+
+
+- 클라이언트 IP/포트, 서버 IP/포트 를 출력하는 php
+
+$_SERVER['REMOTE_ADDR'] : 접속한 클라이언트의 IP. ex) 192.168.0.100
+$_SERVER['REMOTE_PORT'] : 웹사이트에 접속한 사용자 포트
+$_SERVER['SERVER_ADDR'] : 서버 IP. ex) 192.168.0.100
+$_SERVER['SERVER_PORT'] : 서버 포트. ex) 80
+
+
+
+- URL GET 방식으로 구구단 단수 입력 받아서 출력하기.
+
+ex) 127.0.0.1/gugu.php?num=3
+
+http://egloos.zum.com/catweek/v/1667919
+
+
+
+- URL GET 방식으로 문자열을 입력 받으면 이를 . 로 잘라서 표시하기.
+
+ex) 127.0.0.1/gugu.php?str=abdf.dfwf.dfdfe.asdfasdffe.ㅇ.3.4.2.333ㄹㅇ
+
+http://ra2kstar.tistory.com/78
+
+
+# 참고함수
+
+strstr
+substr
+strpos 
+
+줄바꿈 HTML - <BR>

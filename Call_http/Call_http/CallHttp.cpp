@@ -142,6 +142,8 @@ int CallHttp(WCHAR * HostIP, WCHAR * URL, char * PostData, char * OutRecvData, c
 
 SOCKET ConnectHttp(WCHAR * HostIP, int iPort)
 {
+
+	//https://github.com/kbm0996/MyLibrary/blob/master/MyLib/MyLib/CNetServer.cpp#L26
 	int		err;
 
 	// 1. TCP 家南 积己
