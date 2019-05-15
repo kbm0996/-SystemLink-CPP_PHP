@@ -1,4 +1,16 @@
-﻿#ifndef __CALL_HTTP_H__
+﻿/*---------------------------------------------------------------
+  HTTP 데이터 전송 및 수신
+
+  CPU 사용률(사용한 CPU 시간)을 체크하는 클래스.
+ `관리도구 - 성능 모니터`와 유사함. `작업 관리자 - 성능`과는 왠진 모르지만 차이가 남
+
+ - 사용법
+ 
+	// 웹 서버에서 요구하는 데이터 형식 예(RapidJSON Style) : "{ \"id\":\"12d3\", \"pass\":\"1234\", \"nickname\":\"bsds\" }" 
+	err = CallHttp(L"127.0.0.1", L"http://127.0.0.1:80/0_Complete/__History/171126/auth_login.php", GET, "id='아이디'&pass='비밀'", outData, sizeof(outData));
+	err = CallHttp(L"127.0.0.1", L"http://127.0.0.1:80/Register.php", POST, "{\"id\": \"gmf\",\"password\" : \"사용패스워2d드\"}", outData, sizeof(outData));
+----------------------------------------------------------------*/
+#ifndef __CALL_HTTP_H__
 #define __CALL_HTTP_H__
 
 #pragma comment(lib, "ws2_32.lib")
@@ -11,10 +23,6 @@
 #define POST	0
 #define GET		1
 
-// JSON 데이터 형식 "{ \"id\":\"ttsdstt\", \"password\":\"ttsdsdt\", \"nickname\":\"bsds\" }"
-// HttpCall(L"127.0.0.1", L"http://127.0.0.1:80/auth_login.php", "id=12d3&pass=1234", outData, "GET");
-
-
 namespace mylib 
 {
 	//////////////////////////////////////////////////////////////////////////
@@ -24,8 +32,8 @@ namespace mylib
 	//				(WCHAR*) 요청할 URL
 	//				(int) 메소드(POST or GET)
 	//				(char*) 보낼 데이터(Message Body)	
-	//				(char*) _out_ 데이터를 받을 데이터	
-	//				(int) 데이터를 받을 데이터 크기
+	//				(char*) _out_ 데이터를 받을 버퍼	
+	//				(int) 데이터를 받을 버퍼 크기
 	// Return:		(int) 성공시 0, 실패시 소켓 에러
 	//////////////////////////////////////////////////////////////////////////
 	errno_t		CallHttp(WCHAR * szDomainAddr, WCHAR * URL, int iMethodType, char * szSendData, char * OutRecvBuffer, int OutRecvBufferSize = 1024);
