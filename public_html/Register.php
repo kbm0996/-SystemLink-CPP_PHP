@@ -14,6 +14,7 @@ Response
 		"ResultMsg" : "결과 메시지"
 	}
 ---------------------------------------------*/
+
 $ID			= mysqli_real_escape_string($g_DB, $_JSONData['id']);
 $Password	= mysqli_real_escape_string($g_DB, $_JSONData['password']);
 
@@ -41,7 +42,6 @@ else
 {
 	$ResultCode = df_RESULT_SUCCESS;
 	$HashPass = Hashing64($Password);
-
 	$arrQry = array();
 	$Query		= "INSERT INTO account (id, password) VALUES ('{$ID}', '{$HashPass}')";
 	array_push($arrQry, $Query);

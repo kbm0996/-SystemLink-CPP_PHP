@@ -1,0 +1,15 @@
+Register.php
+
+Request
+
+	{	
+		"id"		: "사용아이디", 
+		"password"	: "사용패스워드" 
+	}
+
+Response
+
+	{
+		..공통..
+	}
+	

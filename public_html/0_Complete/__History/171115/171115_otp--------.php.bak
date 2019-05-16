@@ -1,0 +1,47 @@
+<?php
+/*---------------------------
+- 시간 기준 자동생성 키 만들기
+
+OTP 방식
+OTP 시간을 기준으로 특정 키 생성.
+리얼 OTP 는 ? - 생성 키 값에서 시간을 유추할 수 있도록 하여 서버쪽에서 시간을 동기화 시킴.
+
+: 시간을 사용하여 32자의 문자로 된 키를 생성하라 (1분단위)
+---------------------------*/
+function encrypt($value)
+{
+	$Key = hash('md5', $value);
+
+	for($i=0; $i<6; ++$i)
+	{
+		$UpperCase = rand(0,31);
+		$Key[$UpperCase] = strtoupper($Key[$UpperCase]);
+	}
+
+	return substr($Key, 0, 32);
+}
+
+if(!isset($_SESSION)) 
+{
+	session_start();
+}
+
+if(!isset($_SESSION['otptime']))
+{
+	$_SESSION['otptime'] = strtotime("now"); 
+	$_SESSION['sessionkey'] = encrypt($_SESSION['otptime']);
+}
+else
+{
+	while($_SESSION['otptime'] + 60 <= strtotime("now"))
+	{
+		$_SESSION['otptime'] = strtotime("now"); 
+		$_SESSION['sessionkey'] = encrypt($_SESSION['otptime']);
+	}
+}
+
+
+echo 'Time : ' . strtotime("now") . ' / SessID :' . session_id() . '<br><br>';
+echo $_SESSION['otptime'] . '<br>';
+echo $_SESSION['sessionkey'] . '<br>';
+?>

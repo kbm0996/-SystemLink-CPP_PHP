@@ -1,12 +1,13 @@
 <?php
-//--------------------------------------------
-/*
- 로그 함수 및 클래스
+include_once "_Config_DB.php";
+include_once "lib_Profiling.php";
+include_once "lib_Call.php";
+/*--------------------------------------------
+  로그 함수 및 클래스
  외부 URL을 호출하여 로그를 남기도록 한다.
 
  * 필수사항
   _Config_Log.php가 include 돼있어야하며, 다음 변수가 전역으로 세팅돼있어야 함
-
   $cnf_SYSTEM_LOG_URL
   $cnf_GAME_LOG_URL
 
@@ -21,11 +22,7 @@
   $GameLog = GAMELog::getInstance($cnf_GAME_LOG_URL); // 싱글턴 인스턴스 생성
   $GameLog->AddLog($MemberNo, Type, Code, P1, P2, P3, P4, 'PS'); // 로그 추가
   $GameLog->SaveLog(); // 로그 전송
-*/
-//--------------------------------------------
-include_once "_Config_Log.php";
-include_once "lib_Profiling.php";
-include_once "lib_Call.php";
+--------------------------------------------*/
 
 
 //----------------------------------------------------

@@ -1,0 +1,30 @@
+Login.php
+
+Request
+
+	{	
+		"id"		: "사용아이디", 
+		"password"	: "사용패스워드" 
+	}
+
+Response
+
+	{
+		..공통..
+
+		"accountno"	: no
+		"session"	: "세션키"
+	}
+	
+
+password 는 hash('sha256' ... 으로 해쉬코드 저장.
+
+
+
+
+
+
+
+
+
+

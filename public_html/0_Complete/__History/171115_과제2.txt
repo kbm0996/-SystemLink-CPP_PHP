@@ -1,0 +1,97 @@
+Insert or update
+
+a is key
+
+INSERT INTO TABLE (accountno,sessionkey) VALUES (6, '123123') ON DUPLICATE KEY UPDATE sessionkey = '123123';
+INSERT INTO Score (accountno,score) VALUES (1, 2000) ON DUPLICATE KEY UPDATE score = 2000;
+
+
+
+- 회원계정,로그인정보,스코어 테이블 제작
+
+- 세션키 유효시간은 5분.
+
+
+
+table account
+
+	accountno
+	id
+	password
+	nickname
+
+
+table login
+
+	accountno
+	time			
+	ip
+	count
+	
+table session
+
+	accountno
+	sessionkey
+	regtime
+
+
+table score
+
+	accountno
+	score
+
+
+
+
+auth_reg.php		- 신규가입
+
+	Request Param - id,pass,nickname
+	Response Param - resultcode, accountno
+
+	
+
+auth_login.php		- 로그인 & 세션키 발급
+
+	Request Param - id,pass
+	Response Param - resultcode, accountno, sessionkey
+
+
+auth_session.php	- 세션키 재발급 (세션키 유효 확인)
+
+	Request Param - accountno, sessionkey
+	Response Param - resultcode, accountno, new_sessionkey
+
+
+score_get.php		- 내 스코어 얻기 (세션키 유효 확인)
+	
+	Request Param - accountno, sessionkey
+	Response Param - resultcode, score
+
+	
+score_update.php	- 내 스코어 갱신 (세션키 유효 확인)
+	
+	Request Param - accountno, sessionkey, new_score
+	Response Param - resultcode
+	
+
+
+CREATE SCHEMA `new_schema` DEFAULT CHARACTER SET utf8 ;
+
+CREATE TABLE 'account' (accountno BIGINT primary_key not null, id VARCHAR(45) unique not null, password VARCHAR(45) not null, nickname VARCHAR(45) unique not null);
+CREATE TABLE 'login' (accoutno BIGINT primary_key not null, time BIGINT not null, ip VARCHAR(45) unique not null, count BIGINT not null);
+CREATE TABLE 'score' (accountno BIGINT primary_key not null, score BIGINT not null);
+CREATE TABLE 'session' (accountno BIGINT primary_key not null, sessionkey VARCHAR(45) unique not null, regtime BIGINT not null);
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+https://github.com/maha3507/PHP_Project/tree/master/_%EA%B3%BC%EC%A0%9C/170320%20%EA%B3%BC%EC%A0%9C/%EC%98%88%EC%A0%9C
+
+
+
+
+
+
+
+
+
