@@ -7,7 +7,7 @@
  - 사용법
  
 	// 웹 서버에서 요구하는 데이터 형식 예(RapidJSON Style) : "{ \"id\":\"12d3\", \"pass\":\"1234\", \"nickname\":\"bsds\" }" 
-	err = CallHttp(L"127.0.0.1", L"http://127.0.0.1:80/0_Complete/__History/171126/auth_login.php", GET, "id='아이디'&pass='비밀'", outData, sizeof(outData));
+	err = CallHttp(L"127.0.0.1", L"http://127.0.0.1:80/auth_login.php", GET, "id='아이디'&pass='비밀'", outData, sizeof(outData));
 	err = CallHttp(L"127.0.0.1", L"http://127.0.0.1:80/Register.php", POST, "{\"id\": \"gmf\",\"password\" : \"사용패스워2d드\"}", outData, sizeof(outData));
 ----------------------------------------------------------------*/
 #ifndef __CALL_HTTP_H__
@@ -36,8 +36,8 @@ namespace mylib
 	//				(int) 데이터를 받을 버퍼 크기
 	// Return:		(int) 성공시 0, 실패시 소켓 에러
 	//////////////////////////////////////////////////////////////////////////
-	errno_t		CallHttp(WCHAR * szDomainAddr, WCHAR * URL, int iMethodType, char * szSendData, char * OutRecvBuffer, int OutRecvBufferSize = 1024);
-
+	int		CallHttp(const WCHAR * szDomainAddr, const WCHAR * URL, int iMethodType, char * szSendData, char * OutRecvBuffer, int OutRecvBufferSize = 1024);
+	int		CallHttp(const WCHAR * szDomainAddr, const WCHAR * URL, int iMethodType, char * szSendData, WCHAR * OutRecvBuffer, int OutRecvBufferSize = 1024);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Make `HTTP Request Message Format`
@@ -62,7 +62,7 @@ namespace mylib
 	//				(WCHAR const*) 도메인
 	// Return:		(int) 성공시 0, 실패시 소켓 에러
 	//////////////////////////////////////////////////////////////////////////
-	errno_t ConvertDomain2IP(WCHAR* _Destination, rsize_t _SizeInBytes, WCHAR const* _Source);
+	int ConvertDomain2IP(WCHAR* _Destination, rsize_t _SizeInBytes, WCHAR const* _Source);
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ namespace mylib
 	//				(int) 변환된 문자열을 저장할 버퍼 크기
 	// Return:		(int) 변환된 문자열의 길이
 	//////////////////////////////////////////////////////////////////////////
-	int	ConvertWC2C(const WCHAR * pInStr, int iInStrLen, char * pOutBuf, int iOutbufSize);
+	int	ConvertWC2C(const WCHAR * pInStr, char * pOutBuf, int iOutbufSize);
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -106,6 +106,6 @@ namespace mylib
 	//				(int) 변환된 문자열을 저장할 버퍼 크기
 	// Return:		(int) 변환된 문자열의 길이
 	//////////////////////////////////////////////////////////////////////////
-	int	ConvertC2WC(const char * pInStr, int iInStrLen, WCHAR * pOutBuf, int iOutbufSize);
+	int	ConvertC2WC(const char * pInStr, WCHAR * pOutBuf, int iOutbufSize);
 }
 #endif

@@ -1,9 +1,8 @@
 #include "CallHttp.h"
 
-errno_t mylib::CallHttp(WCHAR * szDomainAddr, WCHAR * URL, int iMethodType, char * szSendData, char * OutRecvBuffer, int OutRecvBufferSize)
+int mylib::CallHttp(const WCHAR * szDomainAddr, const WCHAR * URL, int iMethodType, char * szSendData, char * OutRecvBuffer, int OutRecvBufferSize)
 {
-	errno_t err = 0;
-	
+	int err = 0;
 
 	// 1. TCP 소켓 생성
 	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
@@ -30,14 +29,14 @@ errno_t mylib::CallHttp(WCHAR * szDomainAddr, WCHAR * URL, int iMethodType, char
 	// 3. HTTP 프로토콜의 데이터 생성
 	WCHAR szConnectIP[INET_ADDRSTRLEN];
 	err = ConvertDomain2IP(szConnectIP, sizeof(szConnectIP), szDomainAddr);
-	if(err != 0)
+	if (err != 0)
 	{
 		closesocket(s);
 		return err;
 	}
 
 	char szHostIP[INET_ADDRSTRLEN];
-	ConvertWC2C(szConnectIP, wcslen(szConnectIP), szHostIP, sizeof(szHostIP));
+	ConvertWC2C(szConnectIP, szHostIP, sizeof(szHostIP));
 
 	char * szPath = ConvertWC2C(URL);
 
@@ -61,13 +60,13 @@ errno_t mylib::CallHttp(WCHAR * szDomainAddr, WCHAR * URL, int iMethodType, char
 			return err;
 		}
 	}
-	
+
 
 	// 5. 3번에서 만들어진 데이터를 send
 	if (send(s, szData, strlen(szData), 0) == SOCKET_ERROR)
 	{
 		err = WSAGetLastError();
-		
+
 		return err;
 	}
 
@@ -82,7 +81,7 @@ errno_t mylib::CallHttp(WCHAR * szDomainAddr, WCHAR * URL, int iMethodType, char
 
 	///ZeroMemory(szRecvBuf, sizeof(szRecvBuf));
 	ZeroMemory(szCheck, sizeof(szCheck));
-
+	ZeroMemory(OutRecvBuffer, OutRecvBufferSize);
 	while (1)
 	{
 		FD_SET ReadSet;
@@ -91,11 +90,12 @@ errno_t mylib::CallHttp(WCHAR * szDomainAddr, WCHAR * URL, int iMethodType, char
 		select(0, &ReadSet, NULL, NULL, NULL);
 		if (FD_ISSET(s, &ReadSet) > 0)
 		{
-			int iRecvLength = recv(s, OutRecvBuffer + dwTransferred, OutRecvBufferSize/*df_HTTP_CONTENT_MAX_SIZE * 2*/ - dwTransferred, 0);
+			int iRecvLength = recv(s, OutRecvBuffer + dwTransferred, OutRecvBufferSize / 2 - dwTransferred, 0);
 			if (iRecvLength <= 0)
 				break;
 			dwTransferred += iRecvLength;
-			///printf("%s \n\n", szRecvBuf);
+
+			///printf("%s \n\n", OutRecvBuffer_Temp);
 
 			/* HTTP_HEADER 분석 */
 			if (iBodyLength == -1)
@@ -103,50 +103,205 @@ errno_t mylib::CallHttp(WCHAR * szDomainAddr, WCHAR * URL, int iMethodType, char
 				// 7. 데이터를 받은 후 HTTP 헤더에서 완료코드 얻기.
 				//	받은 데이터에서 첫번째 0x20 코드를 찾아서 그 다음 0x20 까지가 완료 코드
 				//	HTTP/1.1 200 OK     // 200이 완료코드
-				ptStrPos = strchr(OutRecvBuffer/*szRecvBuf*/, 0x20); // 0x20 : space
+				ptStrPos = strchr(OutRecvBuffer, 0x20); // 0x20 : space
 				if (ptStrPos != NULL)
 				{
+					// space
 					ptStrPos += 1;
-					strncpy_s(szCheck, sizeof(szCheck), ptStrPos, strchr(ptStrPos, 0x20) - ptStrPos);
+					///printf("%s\n%d\n\n", ptStrPos, err);
+
+					int iValueLen = strchr(ptStrPos, 0x20) - ptStrPos;
+					strncpy_s(szCheck, sizeof(szCheck), ptStrPos, iValueLen);
 					err = atoi(szCheck);
 					if (err != 200)
 						break;
+
+					// 완료코드 + space
+					ptStrPos += iValueLen + 1;
+					iValueLen = 0;
 					///printf("%s\n%d\n\n", ptStrPos, err);
 
 					// 8. 데이터를 받은 후 HTTP 헤더에서 Content-Length: 얻기.
 					//받은 데이터에서 첫번째 Content_Length : 문자열을 찾아서, 그 다음 0x0d까지가 컨텐츠(BODY) 의 길이.
 					// Content - Length : 159	// 이 숫자를 변환하여 BODY 길이 저장
-					ptStrPos = strstr(OutRecvBuffer/*szRecvBuf*/, "Content-Length:");
+					ptStrPos = strstr(OutRecvBuffer, "Content-Length:");
 					if (ptStrPos != NULL)
 					{
+						// "Content-Length: "
 						ptStrPos += 16;
-						strncpy_s(szCheck, sizeof(szCheck), ptStrPos, strchr(ptStrPos, 0x0d) - ptStrPos);
-						iBodyLength = atoi(szCheck);
+						///printf("%s\n%d\n\n", ptStrPos, iBodyLength);
+
+						iValueLen = strchr(ptStrPos, 0x0d) - ptStrPos;
+						strncpy_s(szCheck, sizeof(szCheck), ptStrPos, iValueLen);
+						iBodyLength = atoi(szCheck); // \r\n\r\n을 포함하지만 \0은 비포함한 길이
+
+													 // Content-Length값 + "\r\n"
+						ptStrPos += iValueLen + 2;
+						iValueLen = 0;
 						///printf("%s\n%d\n\n", ptStrPos, iBodyLength);
 
 						// 9. 헤더의 끝(Body 시작) 확인
 						// \r\n\r\n 을 찾아서 그 아래 부분만을 BODY 로 얻어냄.
-						ptStrPos = strstr(OutRecvBuffer/*szRecvBuf*/, "\r\n\r\n");
+						ptStrPos = strstr(OutRecvBuffer, "\r\n\r\n");
 						if (ptStrPos != NULL)
 						{
-							ptStrPos += 4;
-							iHeaderLength = ptStrPos - OutRecvBuffer/*szRecvBuf*/;
+							ptStrPos += 7;
+							///printf("%s\n%d :: %d\n\n", ptStrPos, iBodyLength, strlen(ptStrPos));
+							iHeaderLength = ptStrPos - OutRecvBuffer;
 						}
 					}
 				}
 			}
 
-			//if (iRecvLength >= iHeaderLength + iBodyLength)
-			//{
-			//	strcpy_s(OutRecvBuffer, iBodyLength + 1, ptStrPos);
-			//	///printf("%s\n\n", OutRecvData);
-			//	break;
-			//}
+			// 10. Body만 출력
+			if (dwTransferred - iHeaderLength >= iBodyLength - 3)
+			{
+				strcpy_s(OutRecvBuffer, iBodyLength + 1, ptStrPos);
+				break;
+			}
 		}
 
 		///printf("%s\n\n", OutRecvData);
 	}
 
+	closesocket(s);
+
+	return err;
+}
+
+int mylib::CallHttp(const WCHAR * szDomainAddr, const WCHAR * URL, int iMethodType, char * szSendData, WCHAR * OutRecvBuffer, int OutRecvBufferSize)
+{
+	int err = 0;
+
+	SOCKET s = socket(AF_INET, SOCK_STREAM, 0);
+	if (s == INVALID_SOCKET)
+	{
+		err = WSAGetLastError();
+		return err;
+	}
+
+	timeval time = { 5, 0 };
+	setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char*)&time, sizeof(int));
+	setsockopt(s, SOL_SOCKET, SO_SNDTIMEO, (char*)&time, sizeof(int));
+
+	BOOL	bOptval = TRUE;
+	setsockopt(s, IPPROTO_TCP, TCP_NODELAY, (char *)&bOptval, sizeof(bOptval));
+
+	u_long uOptval = TRUE;
+	ioctlsocket(s, FIONBIO, &uOptval);
+
+	WCHAR szConnectIP[INET_ADDRSTRLEN];
+	err = ConvertDomain2IP(szConnectIP, sizeof(szConnectIP), szDomainAddr);
+	if (err != 0)
+	{
+		closesocket(s);
+		return err;
+	}
+
+	char szHostIP[INET_ADDRSTRLEN];
+	ConvertWC2C(szConnectIP, szHostIP, sizeof(szHostIP));
+
+	char * szPath = ConvertWC2C(URL);
+
+	char szData[1024] = { 0, };
+	makeHttpMsg(iMethodType, szPath, szHostIP, szSendData, strlen(szSendData), szData, sizeof(szData));
+
+	delete[] szPath;
+
+	SOCKADDR_IN serveraddr;
+	serveraddr.sin_family = AF_INET;
+	serveraddr.sin_port = htons(80);
+	InetPton(AF_INET, szConnectIP, &serveraddr.sin_addr);
+	if (connect(s, (SOCKADDR *)&serveraddr, sizeof(serveraddr)) == SOCKET_ERROR)
+	{
+		err = WSAGetLastError();
+		if (err != WSAEWOULDBLOCK)
+		{
+			closesocket(s);
+			return err;
+		}
+	}
+
+
+	if (send(s, szData, strlen(szData), 0) == SOCKET_ERROR)
+	{
+		err = WSAGetLastError();
+
+		return err;
+	}
+
+	char * OutRecvBuffer_Temp = new char[OutRecvBufferSize/2];
+	char * ptStrPos = NULL;		// RecvData Pos
+	char szCheck[10];			// Completion Code & Body Length
+	int iHeaderLength = 0;
+	int iBodyLength = -1;
+	DWORD dwTransferred = 0;
+
+	ZeroMemory(szCheck, sizeof(szCheck));
+	ZeroMemory(OutRecvBuffer_Temp, OutRecvBufferSize/2);
+	while (1)
+	{
+		FD_SET ReadSet;
+		FD_ZERO(&ReadSet);
+		FD_SET(s, &ReadSet);
+		select(0, &ReadSet, NULL, NULL, NULL);
+		if (FD_ISSET(s, &ReadSet) > 0)
+		{
+			int iRecvLength = recv(s, OutRecvBuffer_Temp + dwTransferred, OutRecvBufferSize / 2 - dwTransferred, 0);
+			if (iRecvLength <= 0)
+				break;
+			dwTransferred += iRecvLength;
+
+			if (iBodyLength == -1)
+			{
+			
+				ptStrPos = strchr(OutRecvBuffer_Temp, 0x20);
+				if (ptStrPos != NULL)
+				{
+					ptStrPos += 1;
+
+					int iValueLen = strchr(ptStrPos, 0x20) - ptStrPos;
+					strncpy_s(szCheck, sizeof(szCheck), ptStrPos, iValueLen);
+					err = atoi(szCheck);
+					if (err != 200)
+						break;
+
+					ptStrPos += iValueLen + 1;
+					iValueLen = 0;
+
+					ptStrPos = strstr(OutRecvBuffer_Temp, "Content-Length:");
+					if (ptStrPos != NULL)
+					{
+						ptStrPos += 16;
+
+
+						iValueLen = strchr(ptStrPos, 0x0d) - ptStrPos;
+						strncpy_s(szCheck, sizeof(szCheck), ptStrPos, iValueLen);
+						iBodyLength = atoi(szCheck);
+
+						ptStrPos += iValueLen + 2;
+						iValueLen = 0;
+
+						ptStrPos = strstr(OutRecvBuffer_Temp, "\r\n\r\n");
+						if (ptStrPos != NULL)
+						{
+							ptStrPos += 7;
+							iHeaderLength = ptStrPos - OutRecvBuffer_Temp;
+						}
+					}
+				}
+			}
+
+			if (dwTransferred - iHeaderLength >= iBodyLength - 3)
+			{
+				strcpy_s(OutRecvBuffer_Temp, iBodyLength + 1, ptStrPos);
+				ConvertC2WC(OutRecvBuffer_Temp, OutRecvBuffer, OutRecvBufferSize);
+				break;
+			}
+		}
+	}
+
+	delete[] OutRecvBuffer_Temp;
 	closesocket(s);
 
 	return err;
@@ -163,7 +318,7 @@ void mylib::makeHttpMsg(int iMethodType, char * szRequestURL, char * szRequestHo
 		//	Host: %s\r\n				// Host to request
 		//	Content-Type: application/x-www-form-urlencoded\r\n	// MessageBodyType(application/x-www-form-urlencoded, application/json, ...)
 		//	Content-Length: %d\r\n
-		//	\r\n\r\n
+		//	\r\n
 		//	(data)
 		////////////////////////////////////////////////////////////////
 		sprintf_s(pOutBuf, iOutbufSize, "%sPOST %s HTTP/1.1\r\n", pOutBuf, szRequestURL);
@@ -178,7 +333,7 @@ void mylib::makeHttpMsg(int iMethodType, char * szRequestURL, char * szRequestHo
 		sprintf_s(pOutBuf, iOutbufSize, "%sGET %s?%s HTTP/1.1\r\nHost: %s\r\n\r\n", pOutBuf, szRequestURL, szSendContent, szRequestHostIP);
 }
 
-errno_t mylib::ConvertDomain2IP(WCHAR * _Destination, rsize_t _SizeInBytes, WCHAR const * _Source)
+int mylib::ConvertDomain2IP(WCHAR * _Destination, rsize_t _SizeInBytes, WCHAR const * _Source)
 {
 	int err = 0;
 
@@ -218,9 +373,10 @@ char * mylib::ConvertWC2C(const WCHAR* inStr)
 	return pOutStr;
 }
 
-int mylib::ConvertWC2C(const WCHAR * pInStr, int iInStrLen, char * pOutBuf, int iOutBufSize)
+int mylib::ConvertWC2C(const WCHAR * pInStr, char * pOutBuf, int iOutBufSize)
 {
-	return WideCharToMultiByte(CP_UTF8, 0, pInStr, iInStrLen, pOutBuf, iOutBufSize, NULL, NULL);
+	ZeroMemory(pOutBuf, iOutBufSize);
+	return WideCharToMultiByte(CP_UTF8, 0, pInStr, wcslen(pInStr), pOutBuf, iOutBufSize, NULL, NULL);
 }
 
 WCHAR * mylib::ConvertC2WC(const char * inStr)
@@ -237,7 +393,7 @@ WCHAR * mylib::ConvertC2WC(const char * inStr)
 	return pOutStr;
 }
 
-int mylib::ConvertC2WC(const char * pInStr, int iInStrLen, WCHAR * pOutBuf, int iOutbufSize)
+int mylib::ConvertC2WC(const char * pInStr, WCHAR * pOutBuf, int iOutbufSize)
 {
-	return MultiByteToWideChar(CP_UTF8, 0, pInStr, iInStrLen, pOutBuf, iOutbufSize);
+	return MultiByteToWideChar(CP_UTF8, 0, pInStr, strlen(pInStr), pOutBuf, iOutbufSize);
 }
