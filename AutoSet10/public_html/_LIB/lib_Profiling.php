@@ -95,10 +95,11 @@ class Profiling
 	// 싱글톤 객체 얻기
 	// $SaveURL - 프로파일링 로그 저장 호출할 서버 URL / LogProfiling.php 위치
 	// $ActionPath - 액션 URL 경로
-	// $LogRate - 로그를 저장할 확률 0 - 100
 	//---------------------------------------
-	static function getInstance($SaveURL, $ActionPath, $LogRate = 100)
+	static function getInstance($SaveURL, $ActionPath)
 	{
+		global $cnf_PROFILING_LOG_RATE;
+
 		static $instance;
 		if(!isset($instance))
 		{
@@ -119,9 +120,9 @@ class Profiling
 
 		//---------------------------------------
 		// 로그 저장할지 말지 플래그,
-		// 매번 저장하면 성능에 영향이 있으므로 $LogRate 확률에 따라서 저장 여부 설정
+		// 매번 저장하면 성능에 영향이 있으므로 $cnf_PROFILING_LOG_RATE 확률에 따라서 저장 여부 설정
 		//---------------------------------------
-		if(rand() % 100 < $LogRate)
+		if(rand() % 100 < $cnf_PROFILING_LOG_RATE)
 		{
 			$instance->LOG_FLAG = TRUE;
 		}
@@ -234,9 +235,6 @@ class Profiling
 		$Result = fwrite($fp, $out);
 		fclose($fp);
 		
-
-		
-
 		return $Result;
 	}
 }
