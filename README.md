@@ -51,11 +51,11 @@
   
 ## 📑 구성
 
-### C++ 파트
+### 1. C++ 파트
 
 **📋 _CallHttp.h/cpp** : UTF8↔UTF16 변환 함수, Domain↔IP 변환 함수, Http GET/POST 메세지 보내기 및 받기 함수
 
-### PHP 파트
+### 2. PHP 파트
 
 #### 📂 Home Directory
 
