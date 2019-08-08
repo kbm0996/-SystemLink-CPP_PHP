@@ -70,25 +70,25 @@
 > **📋 UserInfo.php** : 유저 정보 조회 요청 및 응답 페이지 (C++ ↔ **PHP** ↔ DB) 
 >
 > **📋 _Cleanup.php** : 각종 페이지의 끝 부분. DB 연결 해제, 로그 저장, 프로파일러 로그 저장
-
-#### 📂 _SQL : 테이블 최초 생성용 sql
-
-> 📋 game_db.sql, 📋 log_db.sql
-
-#### 📂 _LIB : 라이브러리 폴더
-
-> **📋 _ResultCode.php**
 >
-> **📋 lib_Call.php** : Curl 관련 함수
->
-> **📋 lib_DB.php** : 실질적으로 DB에 Query를 날리는 함수
->
-> **📋 lib_Key.php** : sha256 인코딩 함수
->
-> 📋 lib_ErrorHandler.php, 📋 lib_Log.php, 📋 lib_Profiling.php : 디버깅 관련 함수
-
-#### 📂 _LIB : 실질적으로 로그를 DB에 저장시키는 함수
-
-> **📋 _Config_LOG.php** : DB 관련 글로벌 변수
->
-> 📋 LogGame.php.php, 📋 LogProfiling.php, 📋 LogSystem.php : 종류별 로그 날리는 페이지
+>#### 📂 _SQL : 테이블 최초 생성용 sql
+>>
+>> 📋 game_db.sql, 📋 log_db.sql
+>>
+>#### 📂 _LIB : 라이브러리 폴더
+>>
+>> **📋 _ResultCode.php**
+>>
+>> **📋 lib_Call.php** : Curl 관련 함수
+>>
+>> **📋 lib_DB.php** : 실질적으로 DB에 Query를 날리는 함수
+>>
+>> **📋 lib_Key.php** : sha256 인코딩 함수
+>>
+>> 📋 lib_ErrorHandler.php, 📋 lib_Log.php, 📋 lib_Profiling.php : 디버깅 관련 함수
+>>
+>#### 📂 _LIB : 실질적으로 로그를 DB에 저장시키는 함수
+>>
+>> **📋 _Config_LOG.php** : DB 관련 글로벌 변수
+>>
+>> 📋 LogGame.php.php, 📋 LogProfiling.php, 📋 LogSystem.php : 종류별 로그 날리는 페이지
