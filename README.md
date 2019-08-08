@@ -51,9 +51,13 @@
   
 ## 📑 구성
 
+### C++ 파트
+
 **📋 _CallHttp.h/cpp** : UTF8↔UTF16 변환 함수, Domain↔IP 변환 함수, Http GET/POST 메세지 보내기 및 받기 함수
 
-### 📂 Home Directory
+### PHP 파트
+
+#### 📂 Home Directory
 
 > **📋 _Config_DB.php** : DB 설정값, LOG 전송 URL, LOG 수준, 프로파일링 확률 
 >
