@@ -48,7 +48,7 @@
 
 작 성 중
 
-  ![capture](https://github.com/kbm0996/-SystemLink-CPPxPHPxDB/blob/master/jpg/figure2.png)
+  ![capture](https://github.com/kbm0996/-SystemLink-CPPxPHPxDB/blob/master/jpg/figure2.PNG)
   
   **figure 2. Structure*
   
