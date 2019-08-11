@@ -1,5 +1,8 @@
 # 시스템 연동 - CPP+PHP+DB
 ## 📢 개요
+
+ ![capture](https://github.com/kbm0996/-SystemLink-CPPxPHPxDB/blob/master/jpg/figure0.png)
+
  웹 서버든 게임 서버든 간에 서버측 컴퓨터에서 직접 데이터를 보관하는 경우는 거의 없다. 보안 상의 이유도 있지만 게임 서버의 경우에는 그 규모가 클수록 클라이언트들로부터 오는 각종 요청들을 처리하기에도 부하가 큰데 데이터베이스까지 겸하면 서비스가 불가능할 정도로 무거워진다.
  
  단, 서버를 분산하면 네트워크 통신을 해야하기 때문에 네트워크 지연 시간이 발생한다. 따라서 DB서버와 통신하는 서버 간의 물리적인 거리가 너무 멀어서는 안된다.
@@ -36,7 +39,7 @@
 ```
 
 
-  ![capture](https://github.com/kbm0996/-SystemLink-CPPxPHPxDB/blob/master/jpg/figure.png)
+  ![capture](https://github.com/kbm0996/-SystemLink-CPPxPHPxDB/blob/master/jpg/figure1.png)
   
   **figure 1. Run Result*
 
@@ -45,7 +48,7 @@
 
 작 성 중
 
-  ![objectdiagram](주소)
+  ![capture](https://github.com/kbm0996/-SystemLink-CPPxPHPxDB/blob/master/jpg/figure2.png)
   
   **figure 2. Structure*
   
