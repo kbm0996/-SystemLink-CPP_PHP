@@ -46,9 +46,7 @@
   **figure 1. Run Result*
 
 
-## 📐 구조
-
-작 성 중
+## 📐 구조 및 작동 순서
 
   ![capture](https://github.com/kbm0996/-SystemLink-CPPxPHPxDB/blob/master/jpg/figure2.PNG)
   
