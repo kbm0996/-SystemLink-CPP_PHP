@@ -12,11 +12,11 @@ $cnf_GAME_LOG_URL = "http://127.0.0.1/_LOG/LogGame.php";
 $cnf_PROFILING_LOG_URL = "http://127.0.0.1/_LOG/LogProfiling.php";
 
 // LOG LEVEL --------------------------------------------------
-//define('dfLOG_LEVEL_ERROR',	1);	// define : c¾ð¾îÀÇ define°ú ´Ù¸£°Ô °Ë»öÇØ¼­ Ã£À½ ¡æ ºÎÇÏ
+//define('dfLOG_LEVEL_ERROR',	1);	// define : cì–¸ì–´ì˜ defineê³¼ ë‹¤ë¥´ê²Œ ê²€ìƒ‰í•´ì„œ ì°¾ìŒ â†’ ë¶€í•˜
 //define('dfLOG_LEVEL_DEBUG',	2);
 //define('dfLOG_LEVEL_WARNG',	3);
 $cnf_LOG_LEVEL = 3;
 
 // PROFILING LOG RATE -----------------------------------------
-$cnf_PROFILING_LOG_RATE = 1;	// ·Î±× ³²±æ È®·ü : ¸ðµç ¸í·É¿¡ ´ëÇØ ÇÁ·ÎÆÄÀÏ¸µ ¡æ ºÎÇÏ
+$cnf_PROFILING_LOG_RATE = 1;	// ë¡œê·¸ ë‚¨ê¸¸ í™•ë¥  : ëª¨ë“  ëª…ë ¹ì— ëŒ€í•´ í”„ë¡œíŒŒì¼ë§ â†’ ë¶€í•˜
 ?>

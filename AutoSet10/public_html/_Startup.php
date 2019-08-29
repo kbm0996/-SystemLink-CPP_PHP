@@ -4,15 +4,15 @@ include_once "_LIB/lib_Key.php";
 include_once "_Lib/lib_ErrorHandler.php";
 include_once "_LIB/lib_Log.php";
 $g_AccountNo = 0;
-// °ÔÀÓ ·Î±× & ÇÁ·ÎÆÄÀÏ·¯ 
+// ê²Œìž„ ë¡œê·¸ & í”„ë¡œíŒŒì¼ëŸ¬ 
 $GameLog = GAMELog::getInstance($cnf_GAME_LOG_URL);
 $PF = Profiling::getInstance($cnf_PROFILING_LOG_URL, $_SERVER['PHP_SELF']);
 
 // * file_get_contents("php://input");
-// POST ¹æ½ÄÀ¸·Î º¸³½ http ÆÐÅ¶ÀÇ body¿¡ Á¢±ÙÇÒ ¼ö ÀÖ´Ù. ÀÏ¹ÝÀûÀ¸·Î PHP¿¡¼­´Â form¹æ½Ä Àü¼ÛÀ» ÀÌ¿ëÇÏ´Â °æ¿ì°¡ ´ëºÎºÐÀÌÁö¸¸ body¿¡ JSONÀ¸·Î ¸¸µç raw data¸¦ ³Ö¾î¼­ º¸³»´Â °æ¿ì¿¡ ¼­¹ö´Ü¿¡¼­ Á¢±ÙÇÏ·Á¸é À§¿Í °°Àº ¸í·É¾î¸¦ ÀÌ¿ëÇØ¾ß ÇÑ´Ù.
+// POST ë°©ì‹ìœ¼ë¡œ ë³´ë‚¸ http íŒ¨í‚·ì˜ bodyì— ì ‘ê·¼í•  ìˆ˜ ìžˆë‹¤. ì¼ë°˜ì ìœ¼ë¡œ PHPì—ì„œëŠ” formë°©ì‹ ì „ì†¡ì„ ì´ìš©í•˜ëŠ” ê²½ìš°ê°€ ëŒ€ë¶€ë¶„ì´ì§€ë§Œ bodyì— JSONìœ¼ë¡œ ë§Œë“  raw dataë¥¼ ë„£ì–´ì„œ ë³´ë‚´ëŠ” ê²½ìš°ì— ì„œë²„ë‹¨ì—ì„œ ì ‘ê·¼í•˜ë ¤ë©´ ìœ„ì™€ ê°™ì€ ëª…ë ¹ì–´ë¥¼ ì´ìš©í•´ì•¼ í•œë‹¤.
 $_RequestData = file_get_contents("php://input");
 
-// php 7.2¹öÀüºÎÅÍ ÇÑ±Û µ¥ÀÌÅÍ¸¦ ¹ÞÀ¸¸é JSON_ERROR_UTF8 ¹ß»ý
+// php 7.2ë²„ì „ë¶€í„° í•œê¸€ ë°ì´í„°ë¥¼ ë°›ìœ¼ë©´ JSON_ERROR_UTF8 ë°œìƒ
 if(function_exists('mb_detect_encoding'))
 {
 	if(mb_detect_encoding($_RequestData, "EUC-KR, UTF-8, ASCII") == "EUC-KR")

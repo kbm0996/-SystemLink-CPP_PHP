@@ -14,7 +14,7 @@ function KeyGen32()
 
 function Hashing64($Value)
 {
-	// + º¸¾ÈÀ» À§ÇØ ¼Ò±İÄ¡´Â°Ô ÁÁÀ½(Salt°ª ºÎ¿©)
+	// + ë³´ì•ˆì„ ìœ„í•´ ì†Œê¸ˆì¹˜ëŠ”ê²Œ ì¢‹ìŒ(Saltê°’ ë¶€ì—¬)
 	$Key = hash('sha256', $Value);
 
 	return substr($Key, 0, 64);
