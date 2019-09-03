@@ -1,10 +1,9 @@
-모든 Response 의 기본형식
-
+Response Header
 {
-	"ResultCode" : 결과코드 int,
-	"ResultMsg" : "결과 메시지"
+	"ResultCode" : int,
+	"ResultMsg" : "~~"
 
-	... 기타 메시지...
+	... ETC ...
 
 }
 
